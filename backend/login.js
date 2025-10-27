@@ -18,9 +18,29 @@ const pool = new Pool({
   database: process.env.DB_NAME,
 });
 
-pool.connect()
+pool
+  .connect()
   .then(() => console.log("✅ Connected to PostgreSQL"))
   .catch((err) => {
     console.error("❌ Database connection error:", err.message);
     process.exit(1);
   });
+const JWT_SECRET = "supersecret";
+
+app.post("/register", async (req, res) => {
+  const { email, password } = req.body;
+  const hashedPassword = await bcrypt.hash(password, 10);
+  try {
+    const result = await pool.query(
+      "INSERT INTO login (email,password) VALUES ($1,$2) ",
+      [email, hashedPassword]
+    );
+    res.status(201).json({ message: "User registered successfully" });
+  } catch (err) {
+    console.error("Error registering user:", err.message);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+app.listen(PORT, () => {
+  console.log(` http://localhost:${PORT} `)
+});
