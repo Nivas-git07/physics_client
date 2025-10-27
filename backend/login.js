@@ -30,6 +30,13 @@ const JWT_SECRET = "supersecret";
 
 app.post("/register", async (req, res) => {
   const { email, password } = req.body;
+   const checkingemail=await pool.query(
+        "SELECT * FROM login WHERE email=$1",
+        [email]);
+        if(checkingemail.rows.length>0){
+            res.status(400).json({message:"email already exists"});
+            return;
+        }
   const otp = Math.floor(100000 + Math.random() * 900000);
   const now = new Date(); // this creates a Date object for the current moment :contentReference[oaicite:0]{index=0}
   const formatted = now.toISOString();
