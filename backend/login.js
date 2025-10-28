@@ -79,30 +79,52 @@ app.post("/register", async (req, res) => {
     return;
   }
   app.post("/verify-otp", async (req, res) => {
-    const { email, checkotp, password } = req.body;
-    const exisit = await pool.query("SELECT otp FROM userotp WHERE email=$1", [
-      email,
-    ]);
-    const user = exisit.rows[0];
-    if (user.otp == checkotp) {
-      try {
-        const hashedPassword = await bcrypt.hash(password, 10);
-        const registerUser = await pool.query(
-          "INSERT INTO login (email, password) VALUES ($1, $2) RETURNING id, email",
-          [email, hashedPassword]
-        );
-        console.log("User registered successfully:");
-        res.json({ message: "User registered successfully" });
-      } catch (err) {
-        console.error("Error registering user:", err.message);
-        res.status(500).json({ error: "Internal server error" });
-        return;
-      }
-    } else {
-      console.log("Invalid OTP");
-      res.status(400).json({ message: "Invalid OTP" });
+  const { email, checkotp, password } = req.body;
+
+  try {
+    //  Check if OTP exists for this email
+    const result = await pool.query("SELECT otp, created_at FROM userotp WHERE email=$1", [email]);
+
+    if (result.rows.length === 0) {
+      return res.status(400).json({ message: "OTP not found or already expired" });
     }
-  });
+
+    const userOtp = result.rows[0];
+
+    //  Check if OTP expired (1 minute = 60000 ms)
+    const now = new Date();
+    const createdAt = new Date(userOtp.created_at);
+    const timeDiff = now - createdAt; // in milliseconds
+
+    if (timeDiff > 60000) {  // more than 1 minute
+      // delete expired OTP
+      await pool.query("DELETE FROM userotp WHERE email=$1", [email]);
+      return res.status(400).json({ message: "OTP expired" });
+    }
+
+    //  Check if OTP matches
+    if (userOtp.otp != checkotp) {
+      return res.status(400).json({ message: "Invalid OTP" });
+    }
+
+    //  OTP is valid — hash password and save user
+    const hashedPassword = await bcrypt.hash(password, 10);
+    const registerUser = await pool.query(
+      "INSERT INTO login (email, password) VALUES ($1, $2) RETURNING id, email",
+      [email, hashedPassword]
+    );
+
+    //  Delete OTP after successful verification
+    await pool.query("DELETE FROM userotp WHERE email=$1", [email]);
+
+    res.json({ message: "User registered successfully" });
+
+  } catch (error) {
+    console.error("Error verifying OTP:", error.message);
+    res.status(500).json({ message: "Internal server error" });
+  }
+});
+
 });
 app.listen(PORT, () => {
   console.log(` http://localhost:${PORT} `);
