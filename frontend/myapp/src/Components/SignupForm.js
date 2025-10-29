@@ -3,18 +3,32 @@ import  App from '../App';
 import "./SignupForm.css";
 
 export default function SignupForm({ onSubmit }) {
-  const [username, setUsername] = useState("");
+  const [email, setemail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [errors, setErrors] = useState({});
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     const newErrors = {};
-    if (!username) newErrors.username = "Username is required";
+    if (!email) newErrors.email = "email is required";
     if (!password) newErrors.password = "Password is required";
     if (password !== confirmPassword)
       newErrors.confirm = "Passwords do not match";
+    try{
+      const response= await fetch('http://localhost:5000/register',{
+        method:'POST',
+        headers:{
+          'Content-Type':'application/json',
+        },
+        body:JSON.stringify({email,password}),
+      });
+      const data=await response.json();
+      console.log(data);
+    }
+    catch(error){
+      console.error('Error during registration:',error);
+    }
 
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
@@ -22,7 +36,7 @@ export default function SignupForm({ onSubmit }) {
     }
 
     setErrors({});
-    onSubmit({ username, password });
+   
   };
 
   return (
@@ -56,16 +70,16 @@ export default function SignupForm({ onSubmit }) {
 
           <form onSubmit={handleSubmit} className="signup-form">
             <div className="form-group">
-              <label>Username</label>
+              <label>email</label>
               <input
                 className="input"
                 type="email"
                 placeholder="   youremail@gmail.com"
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
+                value={email}
+                onChange={(e) => setemail(e.target.value)}
               />
-              {errors.username && (
-                <span className="error">{errors.username}</span>
+              {errors.email && (
+                <span className="error">{errors.email}</span>
               )}
             </div>
 
@@ -97,7 +111,7 @@ export default function SignupForm({ onSubmit }) {
               )}
             </div>
 
-            <button type="submit" className="btn-otp">
+            <button  type="submit" className="btn-otp">
               Sign Up with OTP
             </button>
 

@@ -42,25 +42,25 @@ app.post("/register", async (req, res) => {
   }
 
   const otp = Math.floor(100000 + Math.random() * 900000);
-  const now = new Date(); // this creates a Date object for the current moment :contentReference[oaicite:0]{index=0}
+  const now = new Date(); 
   const formatted = now.toISOString();
 
   try {
-    // Check if email exists in userotp
+   
     const existingOtp = await pool.query(
       "SELECT * FROM userotp WHERE email=$1",
       [email]
     );
 
     if (existingOtp.rows.length > 0) {
-      // ✅ Update existing OTP
+     
       await pool.query(
         "UPDATE userotp SET otp=$1, created_at=$2 WHERE email=$3",
         [otp, now, email]
       );
       console.log("OTP updated successfully");
     } else {
-      // ✅ Insert new OTP record
+    
       await pool.query(
         "INSERT INTO userotp (email, otp, created_at) VALUES ($1, $2, $3)",
         [email, otp, now]
@@ -90,7 +90,7 @@ app.post("/register", async (req, res) => {
     const { email, checkotp, password } = req.body;
 
     try {
-      //  Check if OTP exists for this email
+      
       const result = await pool.query(
         "SELECT otp, created_at FROM userotp WHERE email=$1",
         [email]
@@ -104,31 +104,30 @@ app.post("/register", async (req, res) => {
 
       const userOtp = result.rows[0];
 
-      //  Check if OTP expired (1 minute = 60000 ms)
+      
       const now = new Date();
       const createdAt = new Date(userOtp.created_at);
-      const timeDiff = now - createdAt; // in milliseconds
+      const timeDiff = now - createdAt; 
 
       if (timeDiff > 300000) {
-        // more than 5 minute
-        // delete expired OTP
+       
         await pool.query("DELETE FROM userotp WHERE email=$1", [email]);
         return res.status(400).json({ message: "OTP expired" });
       }
 
-      //  Check if OTP matches
+      
       if (userOtp.otp != checkotp) {
         return res.status(400).json({ message: "Invalid OTP" });
       }
 
-      //  OTP is valid — hash password and save user
+      
       const hashedPassword = await bcrypt.hash(password, 10);
       const registerUser = await pool.query(
         "INSERT INTO login (email, password) VALUES ($1, $2) RETURNING id, email",
         [email, hashedPassword]
       );
 
-      //  Delete OTP after successful verification
+      
       await pool.query("DELETE FROM userotp WHERE email=$1", [email]);
 
       res.json({ message: "User registered successfully" });
@@ -150,7 +149,7 @@ app.post("/forget-password", async (req, res) => {
   }
 
   const otp = Math.floor(100000 + Math.random() * 900000);
-  const now = new Date(); // this creates a Date object for the current moment :contentReference[oaicite:0]{index=0}
+  const now = new Date();
   const formatted = now.toISOString();
 
   try {
