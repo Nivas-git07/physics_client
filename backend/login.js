@@ -5,7 +5,9 @@ const cors = require("cors");
 require("dotenv").config();
 const jwt = require("jsonwebtoken");
 const axios = require("axios");
-
+const { OAuth2Client } = require('google-auth-library');
+const e = require("express");
+const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 const app = express();
 const PORT = process.env.PORT || 5000;
 
@@ -19,8 +21,7 @@ const pool = new Pool({
   database: process.env.DB_NAME,
 });
 
-pool
-  .connect()
+pool.connect()
   .then(() => console.log("✅ Connected to PostgreSQL"))
   .catch((err) => {
     console.error("❌ Database connection error:", err.message);
@@ -231,6 +232,53 @@ app.post("/confrom-password", async (req, res) => {
   }
 });
 
+app.post("/api/google", async(req,res)=>{
+  const{token}=req.body;
+  try{
+    const ticket=await client.verifyIdToken({
+      idToken:token,
+      audience:process.env.GOOGLE_CLIENT_ID,
+    });
+    const payload=ticket.getPayload();
+    console.log("Google user payload:",payload);
+    const email=payload.email;
+    const picture=payload.picture;
+    const name=payload.name;
+    const id=payload.sub;
+    await pool.query(
+      "INSERT INTO google_login (email,name,picture,id) VALUES ($1,$2,$3,$4)",
+      [email,name,picture,id]
+    );
+    console.log("Google user saved to database");
+  }
+  catch(error){
+    console.error("Error during Google login:",error.message);
+    res.status(500).json({message:"Internal server error"});
+  }
+})
+
+
+//login///
+app.post("/login", async(req,res)=>{
+  const{email,password}=req.body;
+  try{
+    const result=await pool.query("SELECT * FROM login WHERE email=$1",[email]);
+    if(result.rows.length===0){
+      return res.status(400).json({message:"Invalid email"});
+    }
+    const user=result.rows[0];
+    const ispasswordvalid=await bcrypt.compare(password,user.password);
+    if(!ispasswordvalid){
+      return res.status(400).json({message:"Invalid password"});
+    }
+    const token=jwt.sign({id:user.id,email:user.email},JWT_SECRET,{expiresIn:"1h"});
+    res.json({message:"Login successful",token});
+  }catch(error){
+    console.error("Error during login:",error.message);
+    res.status(500).json({message:"Internal server error"});
+  }
+})
+
 app.listen(PORT, () => {
-  console.log(` http://localhost:${PORT} `);
+  console.log(`http://localhost:${PORT} `);
 });
