@@ -44,13 +44,12 @@ function App() {
 
   // ✅ Render
   return (
-    <div style={{ margin: "50px" }}>
-      <div style={{ textAlign: "center", marginTop: "100px" }}>
-        <h2>Login with Google</h2>
+    <div style={{ margin: "50px", width: "500px", borderRadius: "200px" }}
+>
+      <div style={{ textAlign: "center" }}>
         <div id="googleSignInDiv"></div>
       </div>
     </div>
   );
 }
-
 export default App;
