@@ -33,17 +33,23 @@ app.post("/register", async (req, res) => {
   const checkingemail = await pool.query("SELECT * FROM login WHERE email=$1", [
     email,
   ]);
-  // if (checkingemail.rows.length > 0) {
-  //   res.status(400).json({ message: "email already exists" });
-  //   return;
-  // }
+
+  if (checkingemail.rows.length > 0) {
+    res.status(400).json({ message: "email already exists" });
+    return;
+    console.log("email already exists");
+  }
+
   const otp = Math.floor(100000 + Math.random() * 900000);
   const now = new Date(); // this creates a Date object for the current moment :contentReference[oaicite:0]{index=0}
   const formatted = now.toISOString();
 
- try {
+  try {
     // Check if email exists in userotp
-    const existingOtp = await pool.query("SELECT * FROM userotp WHERE email=$1", [email]);
+    const existingOtp = await pool.query(
+      "SELECT * FROM userotp WHERE email=$1",
+      [email]
+    );
 
     if (existingOtp.rows.length > 0) {
       // ✅ Update existing OTP
@@ -78,54 +84,153 @@ app.post("/register", async (req, res) => {
     res.status(500).json({ error: "Internal server error" });
     return;
   }
+
   app.post("/verify-otp", async (req, res) => {
-  const { email, checkotp, password } = req.body;
+    const { email, checkotp, password } = req.body;
+
+    try {
+      //  Check if OTP exists for this email
+      const result = await pool.query(
+        "SELECT otp, created_at FROM userotp WHERE email=$1",
+        [email]
+      );
+
+      if (result.rows.length === 0) {
+        return res
+          .status(400)
+          .json({ message: "OTP not found or already expired" });
+      }
+
+      const userOtp = result.rows[0];
+
+      //  Check if OTP expired (1 minute = 60000 ms)
+      const now = new Date();
+      const createdAt = new Date(userOtp.created_at);
+      const timeDiff = now - createdAt; // in milliseconds
+
+      if (timeDiff > 300000) {
+        // more than 5 minute
+        // delete expired OTP
+        await pool.query("DELETE FROM userotp WHERE email=$1", [email]);
+        return res.status(400).json({ message: "OTP expired" });
+      }
+
+      //  Check if OTP matches
+      if (userOtp.otp != checkotp) {
+        return res.status(400).json({ message: "Invalid OTP" });
+      }
+
+      //  OTP is valid — hash password and save user
+      const hashedPassword = await bcrypt.hash(password, 10);
+      const registerUser = await pool.query(
+        "INSERT INTO login (email, password) VALUES ($1, $2) RETURNING id, email",
+        [email, hashedPassword]
+      );
+
+      //  Delete OTP after successful verification
+      await pool.query("DELETE FROM userotp WHERE email=$1", [email]);
+
+      res.json({ message: "User registered successfully" });
+    } catch (error) {
+      console.error("Error verifying OTP:", error.message);
+      res.status(500).json({ message: "Internal server error" });
+    }
+  });
+});
+
+app.post("/forget-password", async (req, res) => {
+  const { email } = req.body;
+  const checkingemail = await pool.query("SELECT * FROM login WHERE email=$1", [
+    email,
+  ]);
+  if (checkingemail.rows.length === 0) {
+    res.status(400).json({ message: "Email does not exisit" });
+    return;
+  }
+
+  const otp = Math.floor(100000 + Math.random() * 900000);
+  const now = new Date(); // this creates a Date object for the current moment :contentReference[oaicite:0]{index=0}
+  const formatted = now.toISOString();
 
   try {
-    //  Check if OTP exists for this email
-    const result = await pool.query("SELECT otp, created_at FROM userotp WHERE email=$1", [email]);
-
-    if (result.rows.length === 0) {
-      return res.status(400).json({ message: "OTP not found or already expired" });
-    }
-
-    const userOtp = result.rows[0];
-
-    //  Check if OTP expired (1 minute = 60000 ms)
-    const now = new Date();
-    const createdAt = new Date(userOtp.created_at);
-    const timeDiff = now - createdAt; // in milliseconds
-
-    if (timeDiff > 60000) {  // more than 1 minute
-      // delete expired OTP
-      await pool.query("DELETE FROM userotp WHERE email=$1", [email]);
-      return res.status(400).json({ message: "OTP expired" });
-    }
-
-    //  Check if OTP matches
-    if (userOtp.otp != checkotp) {
-      return res.status(400).json({ message: "Invalid OTP" });
-    }
-
-    //  OTP is valid — hash password and save user
-    const hashedPassword = await bcrypt.hash(password, 10);
-    const registerUser = await pool.query(
-      "INSERT INTO login (email, password) VALUES ($1, $2) RETURNING id, email",
-      [email, hashedPassword]
+    await axios.post(
+      "https://obito123.app.n8n.cloud/webhook/e9d4048a-a920-4f04-acb8-2211971f6859",
+      {
+        email: email,
+        otp: otp,
+      }
     );
-
-    //  Delete OTP after successful verification
-    await pool.query("DELETE FROM userotp WHERE email=$1", [email]);
-
-    res.json({ message: "User registered successfully" });
-
+    res.json({ message: "OTP sent to n8n successfully!" });
   } catch (error) {
-    console.error("Error verifying OTP:", error.message);
-    res.status(500).json({ message: "Internal server error" });
+    console.error(error);
+    res.status(500).json({ message: "Failed to send OTP to n8n" });
+  }
+  try {
+    const existingOtp = await pool.query(
+      "SELECT * FROM userotp WHERE email=$1",
+      [email]
+    );
+    if (existingOtp.rows.length > 0) {
+      await pool.query(
+        "UPDATE userotp SET otp=$1 , created_at=$2 WHERE email=$3",
+        [otp, now, email]
+      );
+    } else {
+      await pool.query(
+        "INSERT INTO userotp (email, otp, created_at) VALUES ($1, $2, $3)",
+        [email, otp, now]
+      );
+    }
+  } catch (err) {
+    console.error("Error inserting OTP:", err.message);
+    res.status(500).json({ error: "forgot otp error" });
+    return;
   }
 });
 
+app.post("/reset-password", async (req, res) => {
+  const { email, resetotp } = req.body;
+  try {
+    const result = await pool.query(
+      "SELECT otp, created_at FROM userotp WHERE email=$1",
+      [email]
+    );
+    const userotp = result.rows[0];
+    const now = new Date();
+    const createdAt = new Date(userotp.created_at);
+    const timeDiff = now - createdAt;
+
+    if (timeDiff > 300000) {
+      await pool.query("DELETE FROM userotp WHERE email=$1", [email]);
+      return res.status(400).json({ message: "OTP expired" });
+    }
+    if (resetotp != result.rows[0].otp) {
+      return res.status(400).json({ message: "Invalid OTP" });
+    }
+    res.json({ message: "OTP verified successfully" });
+    await pool.query("DELETE FROM userotp WHERE email=$1", [email]);
+  } catch (error) {
+    console.error("Error verifying OTP:", error.message);
+    res.status(500).json({ message: "reset otp error" });
+  }
 });
+
+app.post("/confrom-password", async (req, res) => {
+  const { email, newpassword } = req.body;
+  const newhashedpassword = await bcrypt.hash(newpassword, 10);
+  try {
+    await pool.query("UPDATE login SET password=$1 WHERE email=$2", [
+      newhashedpassword,
+      email,
+    ]);
+    res.json({ message: "Password reset successfully" });
+    console.log("Password reset successfully");
+  } catch (error) {
+    console.error("Error resetting password:", error.message);
+    res.status(500).json({ message: "password error" });
+  }
+});
+
 app.listen(PORT, () => {
   console.log(` http://localhost:${PORT} `);
 });
