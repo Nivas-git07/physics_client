@@ -1,10 +1,15 @@
 import React, { useState } from "react";
 import "./OtpVerify.css";
+import { useLocation } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 const OtpVerify = () => {
-  const [otp, setOtp] = useState(["", "", "", "", ""]);
+  const [otp, setOtp] = useState(["", "", "", "", "",""]);
   const [error, setError] = useState("");
-
+const location = useLocation();
+ const navigate = useNavigate();
+  const queryParams = new URLSearchParams(location.search);
+  const email = queryParams.get("email");
   const handleChange = (value, index) => {
     if (/^\d?$/.test(value)) {
       const newOtp = [...otp];
@@ -15,9 +20,12 @@ const OtpVerify = () => {
       }
     }
   };
+  const handleback=()=>{
+    navigate("/sign");
+  }
 
   const handlePaste = (e) => {
-    const paste = e.clipboardData.getData("text").slice(0, 5);
+    const paste = e.clipboardData.getData("text").slice(0, 6);
     if (/^\d+$/.test(paste)) {
       setOtp(paste.split(""));
     }
@@ -34,7 +42,7 @@ const OtpVerify = () => {
 
   const handleCheck = async () => {
     const enteredOtp = otp.join("");
-    if (enteredOtp.length < 5) {
+    if (enteredOtp.length < 6) {
       setError("Please enter complete OTP");
       return;
     }
@@ -43,11 +51,12 @@ const OtpVerify = () => {
       const response = await fetch("http://localhost:5000/verify-otp", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ otp: enteredOtp }),
+        body: JSON.stringify({ checkotp: enteredOtp, email }),
       });
 
       const data = await response.json();
       if (response.ok) {
+        navigate("/");
         alert("✅ OTP Verified Successfully!");
         setError("");
       } else {
@@ -87,7 +96,7 @@ const OtpVerify = () => {
             <button className="check-btn" onClick={handleCheck}>
               Check
             </button>
-            <button className="back-btn">Back</button>
+            <button onClick={handleback} className="back-btn">Back</button>
           </div>
         </div>
 

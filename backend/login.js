@@ -44,12 +44,16 @@ app.post("/register", async (req, res) => {
   const otp = Math.floor(100000 + Math.random() * 900000);
   const now = new Date(); 
   const formatted = now.toISOString();
-
+  const hashedPassword = await bcrypt.hash(password, 10);
   try {
-   
     const existingOtp = await pool.query(
       "SELECT * FROM userotp WHERE email=$1",
       [email]
+    );
+
+    await pool.query(
+      "INSERT INTO login (email, password) VALUES ($1, $2)",
+      [email, hashedPassword]
     );
 
     if (existingOtp.rows.length > 0) {
@@ -66,6 +70,7 @@ app.post("/register", async (req, res) => {
         [email, otp, now]
       );
       console.log("OTP inserted successfully");
+
     }
     try {
       await axios.post(
@@ -89,7 +94,7 @@ app.post("/register", async (req, res) => {
   }
 
   app.post("/verify-otp", async (req, res) => {
-    const { email, checkotp, password } = req.body;
+    const { email, checkotp } = req.body;
 
     try {
       
@@ -123,10 +128,9 @@ app.post("/register", async (req, res) => {
       }
 
       
-      const hashedPassword = await bcrypt.hash(password, 10);
+    
       const registerUser = await pool.query(
-        "INSERT INTO login (email, password) VALUES ($1, $2) RETURNING id, email",
-        [email, hashedPassword]
+       "UPDATE login SET status='ACTIVE' WHERE email=$1",[email]
       );
 
       
@@ -167,6 +171,7 @@ app.post("/forget-password", async (req, res) => {
     console.error(error);
     res.status(500).json({ message: "Failed to send OTP to n8n" });
   }
+
   try {
     const existingOtp = await pool.query(
       "SELECT * FROM userotp WHERE email=$1",
@@ -272,7 +277,13 @@ app.post("/login", async(req,res)=>{
     if(!ispasswordvalid){
       return res.status(400).json({message:"Invalid password"});
     }
-    const token=jwt.sign({id:user.id,email:user.email},JWT_SECRET,{expiresIn:"1h"});
+    const token=jwt.sign({id:user.id,email:user.email},JWT_SECRET,{expiresIn:"1h"}); 
+
+    if(result.rows[0].status!=="ACTIVE"){
+      return res.status(403).json({message:"Please register your account first by verifying OTP" });
+      console.log("Please register your account first by verifying OTP");
+    }
+
     res.json({message:"Login successful",token});
   }catch(error){
     console.error("Error during login:",error.message);

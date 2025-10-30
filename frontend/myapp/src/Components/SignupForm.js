@@ -2,15 +2,17 @@ import React, { useState } from "react";
 import Google from "../google/Google";
 import "./SignupForm.css";
 import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import GoogleLoginButton from "../google/Google";
 export default function SignupForm({ onSubmit }) {
   const [email, setemail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [errors, setErrors] = useState({});
-
+  const navigate = useNavigate();
   const handleSubmit = async (e) => {
     e.preventDefault();
+    
     const newErrors = {};
     if (!email) newErrors.email = "Email is required";
     if (!password) newErrors.password = "Password is required";
@@ -34,6 +36,7 @@ export default function SignupForm({ onSubmit }) {
       });
       const data = await response.json();
       console.log(data);
+      navigate(`/otp-verify?email=${encodeURIComponent(email)}`);
     } catch (error) {
       console.error("Error during registration:", error);
     }
@@ -49,7 +52,7 @@ export default function SignupForm({ onSubmit }) {
             <option>Tamil</option>
             <option>Hindi</option>
           </select>
-          <Link to="/login" className="signin-link">
+          <Link to="/" className="signin-link">
             Sign in
           </Link>
           <span className="home-icon">🏠</span>
@@ -61,7 +64,7 @@ export default function SignupForm({ onSubmit }) {
           <h1>HEY THERE !</h1>
           <p>
             have an account?{" "}
-            <Link to="/login" style={{ color: "#00bfa6" }}>
+            <Link to="/" style={{ color: "#00bfa6" }}>
               Sign in
             </Link>
           </p>
@@ -108,7 +111,7 @@ export default function SignupForm({ onSubmit }) {
             </div>
 
             <button type="submit" className="btn-otp">
-              Sign Up with OTP
+              Sign Up 
             </button>
 
             <div className="divider">

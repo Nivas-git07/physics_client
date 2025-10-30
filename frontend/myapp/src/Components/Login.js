@@ -4,14 +4,14 @@ import { Link } from "react-router-dom";
 import GoogleLoginButton from "../google/Google";
 
 export default function LoginForm({ onSubmit }) {
-  const [username, setUsername] = useState("");
+  const [email, setemail] = useState("");
   const [password, setPassword] = useState("");
   const [errors, setErrors] = useState({});
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     const newErrors = {};
-    if (!username) newErrors.username = "Username is required";
+    if (!email) newErrors.email = "email is required";
     if (!password) newErrors.password = "Password is required";
 
     if (Object.keys(newErrors).length > 0) {
@@ -21,9 +21,25 @@ export default function LoginForm({ onSubmit }) {
 
     setErrors({});
     if (onSubmit) {
-      onSubmit({ username, password });
+      onSubmit({ email, password });
+    }
+     try {
+      const response = await fetch("http://localhost:5000/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email, password }),
+      });
+      const data = await response.json();
+      console.log(data);
+      alert(data.message);
+    } catch (error) {
+      console.error("Error during registration:", error);
     }
   };
+  
+  
 
   return (
     <div className="page-container">
@@ -59,11 +75,11 @@ export default function LoginForm({ onSubmit }) {
                 className="input"
                 type="email"
                 placeholder="youremail@gmail.com"
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
+                value={email}
+                onChange={(e) => setemail(e.target.value)}
               />
-              {errors.username && (
-                <span className="error">{errors.username}</span>
+              {errors.email && (
+                <span className="error">{errors.email}</span>
               )}
             </div>
 
@@ -82,7 +98,7 @@ export default function LoginForm({ onSubmit }) {
             </div>
 
             <button type="submit" className="btn-signin">
-              Sign In with OTP
+              Sign In 
             </button>
 
             <div className="divider">
