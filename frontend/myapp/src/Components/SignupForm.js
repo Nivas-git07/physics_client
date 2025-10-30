@@ -1,7 +1,8 @@
 import React, { useState } from "react";
-import  App from '../App';
+import Google from "../google/Google";
 import "./SignupForm.css";
-
+import { Link } from "react-router-dom";
+import GoogleLoginButton from "../google/Google";
 export default function SignupForm({ onSubmit }) {
   const [email, setemail] = useState("");
   const [password, setPassword] = useState("");
@@ -11,24 +12,10 @@ export default function SignupForm({ onSubmit }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
     const newErrors = {};
-    if (!email) newErrors.email = "email is required";
+    if (!email) newErrors.email = "Email is required";
     if (!password) newErrors.password = "Password is required";
     if (password !== confirmPassword)
       newErrors.confirm = "Passwords do not match";
-    try{
-      const response= await fetch('http://localhost:5000/register',{
-        method:'POST',
-        headers:{
-          'Content-Type':'application/json',
-        },
-        body:JSON.stringify({email,password}),
-      });
-      const data=await response.json();
-      console.log(data);
-    }
-    catch(error){
-      console.error('Error during registration:',error);
-    }
 
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
@@ -36,12 +23,24 @@ export default function SignupForm({ onSubmit }) {
     }
 
     setErrors({});
-   
+    // Your submission logic
+    try {
+      const response = await fetch("http://localhost:5000/register", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email, password }),
+      });
+      const data = await response.json();
+      console.log(data);
+    } catch (error) {
+      console.error("Error during registration:", error);
+    }
   };
 
   return (
     <div className="page-container">
-      {/* Navbar */}
       <nav className="navbar">
         <div className="logo">🌸 Alsana</div>
         <div className="nav-links">
@@ -50,37 +49,34 @@ export default function SignupForm({ onSubmit }) {
             <option>Tamil</option>
             <option>Hindi</option>
           </select>
-          <a href="/signin" className="signin-link">
+          <Link to="/login" className="signin-link">
             Sign in
-          </a>
+          </Link>
           <span className="home-icon">🏠</span>
         </div>
       </nav>
 
-      {/* Main content */}
       <div className="signup-container">
         <div className="form-section">
           <h1>HEY THERE !</h1>
           <p>
-            have a account ?{" "}
-            <a style={{ color: "#00bfa6" }} href="/signin">
+            have an account?{" "}
+            <Link to="/login" style={{ color: "#00bfa6" }}>
               Sign in
-            </a>
+            </Link>
           </p>
 
           <form onSubmit={handleSubmit} className="signup-form">
             <div className="form-group">
-              <label>email</label>
+              <label>Email</label>
               <input
                 className="input"
                 type="email"
-                placeholder="   youremail@gmail.com"
+                placeholder="youremail@gmail.com"
                 value={email}
                 onChange={(e) => setemail(e.target.value)}
               />
-              {errors.email && (
-                <span className="error">{errors.email}</span>
-              )}
+              {errors.email && <span className="error">{errors.email}</span>}
             </div>
 
             <div className="form-group">
@@ -88,7 +84,7 @@ export default function SignupForm({ onSubmit }) {
               <input
                 className="input"
                 type="password"
-                placeholder="  * * * * * * * * * *"
+                placeholder="* * * * * * * * * *"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
               />
@@ -98,11 +94,11 @@ export default function SignupForm({ onSubmit }) {
             </div>
 
             <div className="form-group">
-              <label className="labi">Confirm Password</label>
+              <label>Confirm Password</label>
               <input
                 className="input"
                 type="password"
-                placeholder="   * * * * * * * * * *"
+                placeholder="* * * * * * * * * *"
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
               />
@@ -111,15 +107,16 @@ export default function SignupForm({ onSubmit }) {
               )}
             </div>
 
-            <button  type="submit" className="btn-otp">
+            <button type="submit" className="btn-otp">
               Sign Up with OTP
             </button>
 
             <div className="divider">
               <span>or continue with</span>
             </div>
+
             <div>
-                <App/>
+              <GoogleLoginButton/>
             </div>
           </form>
         </div>
