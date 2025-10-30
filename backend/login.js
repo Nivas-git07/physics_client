@@ -80,6 +80,8 @@ app.post("/register", async (req, res) => {
       console.error(error);
       res.status(500).json({ message: "Failed to send OTP to n8n" });
     }
+     
+      
   } catch (err) {
     console.error("Error inserting OTP:", err.message);
     res.status(500).json({ error: "Internal server error" });

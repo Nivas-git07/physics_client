@@ -1,0 +1,385 @@
+@import url('https://fonts.googleapis.com/css2?family=Mochiy+Pop+P+One&family=Poppins:wght@700&display=swap');
+
+body {
+  margin: 0;
+  background: #ffffff;
+  font-family: 'Poppins', sans-serif;
+}
+
+.otp-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+}
+
+.otp-card {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 90%;
+  max-width: 900px;
+  background: #fff;
+  border-radius: 20px;
+  box-shadow: 0px 2px 12px rgba(0, 0, 0, 0.08);
+  padding: 50px 60px;
+}
+
+/* ===== Left Side ===== */
+.otp-left {
+  flex: 1;
+  position: relative;
+}
+
+.otp-logo {
+  font-family: 'Mochiy Pop P One', sans-serif;
+  font-size: 36px;
+  font-weight: 400;
+  line-height: 32px;
+  color: #0EA89B;
+  margin-bottom: 40px;
+  text-align: left;
+}
+
+.otp-title {
+  font-family: 'Poppins', sans-serif;
+  font-weight: 700;
+  font-size: 48px;
+  letter-spacing: 5px;
+  text-align: left;
+  color: #444B59;
+  margin-bottom: 30px;
+}
+
+.otp-label {
+  display: block;
+  font-size: 18px;
+  color: #444B59;
+  margin-bottom: 15px;
+  text-align: left;
+}
+
+/* OTP inputs */
+.otp-inputs {
+  display: flex;
+  gap: 15px;
+  margin-bottom: 30px;
+}
+
+.otp-inputs input {
+  width: 55px;
+  height: 55px;
+  border: 1.5px solid #444B59;
+  border-radius: 50%;
+  text-align: center;
+  font-size: 22px;
+  font-weight: 600;
+  color: #444B59;
+  outline: none;
+  transition: all 0.2s ease;
+}
+
+.otp-inputs input:focus {
+  border: 2px solid #0EA89B;
+  box-shadow: 0 0 8px rgba(14, 168, 155, 0.3);
+}
+
+/* Error Message */
+.otp-error {
+  color: #ff3b3b;
+  background: #ffecec;
+  border-left: 5px solid #ff3b3b;
+  border-radius: 10px;
+  padding: 8px 12px;
+  width: fit-content;
+  font-size: 15px;
+  animation: shake 0.3s ease-in-out;
+  margin-bottom: 20px;
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  20%, 60% { transform: translateX(-5px); }
+  40%, 80% { transform: translateX(5px); }
+}
+
+/* Buttons */
+.otp-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.check-btn {
+  width: 200px;
+  height: 50px;
+  border: none;
+  border-radius: 25px;
+  background: linear-gradient(to right, #0EA89B, #0EA89B);
+  color: #fff;
+  font-size: 18px;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.check-btn:hover {
+  background: #0c988c;
+}
+
+.back-btn {
+  width: 200px;
+  height: 50px;
+  border: 2px solid #0EA89B;
+  border-radius: 25px;
+  background: #fff;
+  color: #0EA89B;
+  font-size: 18px;
+  cursor: pointer;
+}
+
+/* ===== Right Side Image ===== */
+.otp-right {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.otp-img {
+  width: 350px;
+  height: auto;
+}
+
+/* ===== Responsive ===== */
+@media (max-width: 768px) {
+  .otp-card {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .otp-left {
+    align-items: center;
+  }
+
+  .otp-img {
+    width: 280px;
+    margin-top: 30px;
+  }
+
+  .otp-logo {
+    text-align: center;
+  }
+
+  .otp-title {
+    text-align: center;
+  }
+
+  .otp-label {
+    text-align: center;
+  }
+
+  .otp-inputs {
+    justify-content: center;
+  }
+
+  .otp-buttons {
+    align-items: center;
+  }
+}
+/* === Alsana Title === */
+.brand-title {
+  font-family: "Mochiy Pop P One", sans-serif;
+  font-weight: 400;
+  font-size: 32px; /* slightly smaller than 36px */
+  line-height: 32px;
+  letter-spacing: 0px;
+  color: #0EA89B;
+  position: absolute;
+  top: 66px;
+  left: 128px;
+  opacity: 1;
+}
+
+/* === Verify Heading === */
+.verify-heading {
+  font-family: "Poppins", sans-serif;
+  font-weight: 700;
+  font-size: 48px;
+  letter-spacing: 5px;
+  text-align: left;
+  position: absolute;
+  top: 209px;
+  left: 71px;
+  opacity: 1;
+  color: #333;
+}
+
+/* === Invalid OTP Message === */
+.invalid-otp {
+  font-family: "Poppins", sans-serif;
+  color: #ff3b3b;
+  font-weight: 600;
+  background: rgba(255, 0, 0, 0.1);
+  padding: 10px 20px;
+  border-radius: 10px;
+  display: inline-block;
+  margin-top: 15px;
+  text-align: center;
+  animation: shake 0.4s ease-in-out;
+  box-shadow: 0 0 10px rgba(255, 0, 0, 0.3);
+}
+
+/* Add animation for invalid OTP */
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  20%, 60% { transform: translateX(-8px); }
+  40%, 80% { transform: translateX(8px); }
+}
+
+/* === Buttons (Check + Back) === */
+.button-group {
+  display: flex;
+  justify-content: center;
+  gap: 40px; /* gives a little more space between buttons */
+  margin-top: 30px;
+}
+
+button {
+  background-color: #0EA89B;
+  color: white;
+  border: none;
+  padding: 12px 35px;
+  border-radius: 10px;
+  font-family: "Poppins", sans-serif;
+  font-weight: 600;
+  font-size: 18px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+button:hover {
+  background-color: #0C9489;
+  transform: scale(1.05);
+  box-shadow: 0 4px 10px rgba(14, 168, 155, 0.3);
+}
+
+/* === Error Message (Smooth Style) === */
+.invalid-otp {
+  font-family: "Poppins", sans-serif;
+  color: #d00000;
+  font-weight: 600;
+  background: rgba(255, 99, 99, 0.08);
+  padding: 10px 20px;
+  border-radius: 12px;
+  display: inline-block;
+  margin-top: 20px;
+  text-align: center;
+  border: 1px solid rgba(255, 0, 0, 0.2);
+  backdrop-filter: blur(4px);
+  animation: fadeIn 0.4s ease-in-out;
+  box-shadow: 0 0 12px rgba(255, 0, 0, 0.15);
+}
+
+/* === Smooth Fade Animation for Error === */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-5px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+/* === Buttons (Check + Back) === */
+.button-group {
+  display: flex;
+  justify-content: center;
+  gap: 40px; /* gives a little more space between buttons */
+  margin-top: 30px;
+}
+
+button {
+  background-color: #0EA89B;
+  color: white;
+  border: none;
+  padding: 12px 35px;
+  border-radius: 10px;
+  font-family: "Poppins", sans-serif;
+  font-weight: 600;
+  font-size: 18px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+button:hover {
+  background-color: #0C9489;
+  transform: scale(1.05);
+  box-shadow: 0 4px 10px rgba(14, 168, 155, 0.3);
+}
+
+/* === Error Message (Smooth Style) === */
+.invalid-otp {
+  font-family: "Poppins", sans-serif;
+  color: #d00000;
+  font-weight: 600;
+  background: rgba(255, 99, 99, 0.08);
+  padding: 10px 20px;
+  border-radius: 12px;
+  display: inline-block;
+  margin-top: 20px;
+  text-align: center;
+  border: 1px solid rgba(255, 0, 0, 0.2);
+  backdrop-filter: blur(4px);
+  animation: fadeIn 0.4s ease-in-out;
+  box-shadow: 0 0 12px rgba(255, 0, 0, 0.15);
+}
+
+/* === Smooth Fade Animation for Error === */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-5px); }
+  to { opacity: 1; transform: translateY(0); }
+}/* === Buttons (Check + Back) === */
+.button-group {
+  display: flex;
+  justify-content: center;
+  gap: 40px; /* gives a little more space between buttons */
+  margin-top: 30px;
+}
+
+button {
+  background-color: #0EA89B;
+  color: white;
+  border: none;
+  padding: 12px 35px;
+  border-radius: 10px;
+  font-family: "Poppins", sans-serif;
+  font-weight: 600;
+  font-size: 18px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+button:hover {
+  background-color: #0C9489;
+  transform: scale(1.05);
+  box-shadow: 0 4px 10px rgba(14, 168, 155, 0.3);
+}
+
+/* === Error Message (Smooth Style) === */
+.invalid-otp {
+  font-family: "Poppins", sans-serif;
+  color: #d00000;
+  font-weight: 600;
+  background: rgba(255, 99, 99, 0.08);
+  padding: 10px 20px;
+  border-radius: 12px;
+  display: inline-block;
+  margin-top: 20px;
+  text-align: center;
+  border: 1px solid rgba(255, 0, 0, 0.2);
+  backdrop-filter: blur(4px);
+  animation: fadeIn 0.4s ease-in-out;
+  box-shadow: 0 0 12px rgba(255, 0, 0, 0.15);
+}
+
+/* === Smooth Fade Animation for Error === */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-5px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
