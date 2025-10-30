@@ -1,0 +1,36 @@
+.google-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 20px auto;
+  width: 100%;
+  max-width: 350px;           /* limit width on large screens */
+  padding: 0 1rem;
+  box-sizing: border-box;
+}
+
+.google-button-container {
+  width: 100%;
+  border-radius: 50px;        /* big rounding for “pill” style */
+  overflow: hidden;            /* ensure nothing bleeds outside the radius */
+  text-align: center;          /* center button inside container */
+}
+
+.google-button-container > div[role="button"] {
+  border-radius: 50px !important;
+}
+
+/* Responsive adjustments for smaller screens */
+@media (max-width: 600px) {
+  .google-wrapper {
+    max-width: 260px;          /* smaller max width for mobile */
+    margin: 10px auto;
+    padding: 0 0.5rem;
+  }
+  .google-button-container {
+    border-radius: 30px;
+  }
+  .google-button-container > div[role="button"] {
+    border-radius: 30px !important;
+  }
+}
