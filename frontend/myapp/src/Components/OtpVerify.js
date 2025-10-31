@@ -59,6 +59,7 @@ const location = useLocation();
         navigate("/");
         alert("✅ OTP Verified Successfully!");
         setError("");
+    
       } else {
         setError("❌ Invalid OTP! Please try again.");
       }

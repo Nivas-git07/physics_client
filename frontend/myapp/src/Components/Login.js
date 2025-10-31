@@ -2,11 +2,18 @@ import React, { useState } from "react";
 import "./Login.css";
 import { Link } from "react-router-dom";
 import GoogleLoginButton from "../google/Google";
+import { useNavigate } from "react-router-dom";
+import { Navigate } from "react-router-dom";
+
 
 export default function LoginForm({ onSubmit }) {
   const [email, setemail] = useState("");
   const [password, setPassword] = useState("");
   const [errors, setErrors] = useState({});
+   const navigate = useNavigate();
+   const handleback=()=>{
+    navigate("/home");
+  }
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -33,7 +40,12 @@ export default function LoginForm({ onSubmit }) {
       });
       const data = await response.json();
       console.log(data);
-      alert(data.message);
+      if(data.message==="successful"){
+        handleback()
+      }
+      else{
+        alert("error")
+      }
     } catch (error) {
       console.error("Error during registration:", error);
     }

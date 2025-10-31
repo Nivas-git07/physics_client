@@ -284,7 +284,7 @@ app.post("/login", async(req,res)=>{
       console.log("Please register your account first by verifying OTP");
     }
 
-    res.json({message:"Login successful",token});
+    res.status(200).json({message:"successful",token})
   }catch(error){
     console.error("Error during login:",error.message);
     res.status(500).json({message:"Internal server error"});

@@ -1,0 +1,238 @@
+.homepage {
+  font-family: "Poppins", sans-serif;
+  background-color: #f8fcfd;
+  color: #1e1e1e;
+}
+
+/* Navbar */
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 25px 80px;
+  background-color: transparent;
+}
+
+.logo {
+  font-weight: 700;
+  font-size: 22px;
+  color: #00bfa6;
+}
+
+.nav-menu {
+  display: flex;
+
+  list-style: none;
+  gap: 30px;
+  font-weight: 500;
+}
+.nav-menu :hover{
+    color: #00bfa6;
+}
+
+.nav-menu li {
+  cursor: pointer;
+}
+
+.email {
+  font-size: 14px;
+  color: #555;
+}
+
+/* Hero Section */
+.hero {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 80px 100px;
+}
+
+.hero-left h1 {
+  font-size: 64px;
+  line-height: 1.1;
+  font-weight: 700;
+  color: #111;
+}
+
+.growing {
+  font-size: 72px;
+  letter-spacing: 1px;
+}
+
+.seed {
+  font-weight: 600;
+}
+
+.tree {
+  font-weight: 700;
+}
+
+.physics {
+  color: #00bfa6;
+}
+
+.subtitle {
+  font-size: 18px;
+  color: #666;
+  margin: 20px 0;
+  width: 400px;
+}
+
+.join-btn {
+  background-color: #00bfa6;
+  color: white;
+  border: none;
+  padding: 12px 32px;
+  border-radius: 6px;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+/* Graph */
+.hero-right {
+  position: relative;
+  text-align: right;
+  width: 300px;
+}
+
+.formula {
+  font-size: 20px;
+  color: #888;
+  margin-bottom: 40px;
+}
+
+.graph {
+  position: relative;
+  height: 180px;
+  width: 2px;
+  background: linear-gradient(to top, #bbb, #00bfa6);
+  margin-left: auto;
+}
+
+.label {
+  position: absolute;
+  font-size: 13px;
+  color: #666;
+}
+
+.label.power {
+  bottom: 40px;
+  left: -60px;
+}
+
+.label.work {
+  top: 0;
+  right: -50px;
+}
+
+.label.time {
+  bottom: -20px;
+  left: -40px;
+}
+
+/* About Section */
+.about {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  padding: 80px 100px;
+  background: white;
+}
+
+.about-left {
+  width: 30%;
+}
+
+.about-left h2 {
+  font-size: 42px;
+  font-weight: 700;
+  margin-bottom: 10px;
+}
+
+.highlight {
+  color: #00bfa6;
+  background-color: #d4f8f3;
+  padding: 0 6px;
+  border-radius: 4px;
+}
+
+.about-left h3 {
+  font-weight: 500;
+  margin-bottom: 15px;
+}
+
+.description {
+  font-size: 15px;
+  color: #555;
+  width: 90%;
+}
+
+.about-center {
+  text-align: center;
+}
+
+.about-center img {
+  width: 200px;
+  border-radius: 10px;
+}
+
+.watering {
+  margin-top: 8px;
+  color: #888;
+  font-weight: 500;
+}
+
+.about-right {
+  text-align: center;
+}
+
+.years {
+  font-size: 64px;
+  color: #00bfa6;
+  font-weight: 700;
+}
+
+/* Work Experience */
+.experience {
+  text-align: center;
+  padding: 80px 50px;
+  background-color: #f8fcfd;
+}
+
+.experience h2 {
+  font-size: 28px;
+  font-weight: 700;
+  margin-bottom: 30px;
+}
+
+.work-card {
+  background: white;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  border-radius: 16px;
+  padding: 40px;
+  width: 80%;
+  margin: 0 auto;
+}
+
+.work-card h3 {
+  color: #111;
+  font-weight: 600;
+}
+
+.colleges {
+  display: flex;
+  justify-content: space-around;
+  margin-top: 25px;
+  font-size: 15px;
+  color: #333;
+}
+.underline {
+  width: 250px;
+  height: 50px;
+  background-color: #00bfa6;
+  margin: 10px auto 50px auto;
+  border-radius: 3px;
+}
+.phy{
+    color: #00bfa6;
+}
