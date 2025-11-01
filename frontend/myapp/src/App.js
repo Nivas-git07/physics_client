@@ -5,6 +5,7 @@ import LoginForm from "./Components/Login";
 import OtpVerify  from "./Components/OtpVerify";
 import HomePage from "./Components/Home";
 import FooterSection from "./Components/FooterSection";
+import Form from "./Components/Form";
 
 
 
@@ -17,6 +18,7 @@ function App() {
         <Route path="/Otp-verify" element={<OtpVerify/>}/>
         <Route path="/home" element={<HomePage/>}/>
         <Route path="/about" element={<FooterSection/>}/>
+        <Route path="/form" element={<Form/>}/>
       </Routes>
     </Router>
   );
